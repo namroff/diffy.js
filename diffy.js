@@ -12,6 +12,12 @@
     // TODO: something better with functions?
     if ( (typeof myExpected) == (typeof myActual) ) {
       if ( _.isArray( myExpected ) && _.isArray( myActual ) ) {
+
+        // TODO: handle the case where the actual array is longer
+        //       likely factor the below code out into a separate method
+        //       that iterates on the longer array, then swap arguments
+        //       as necessary.
+
         // compare each element
         same = true; // initialization
         _( myExpected ).each(function ( expectedValue, index ) {
