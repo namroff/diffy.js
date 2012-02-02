@@ -84,7 +84,7 @@
       });
     }
     // Leak a global regardless of module system
-    root['diffy'] = diffy;
+    root.diffy = diffy;
   }
 
 })( this );
