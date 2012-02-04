@@ -35,11 +35,11 @@
         }
       } 
       else if ( typeof expectedCopy == 'object' ) {
-        if ( (_.indexOf( alreadyProcessed, expectedCopy ) == -1) &&
-             (_.indexOf( alreadyProcessed, actualCopy ) == -1) ) {
+        if ( (_.indexOf( alreadyProcessed, expected ) == -1) &&
+             (_.indexOf( alreadyProcessed, actual ) == -1) ) {
 
-          alreadyProcessed.push( expectedCopy );
-          alreadyProcessed.push( actualCopy );
+          alreadyProcessed.push( expected );
+          alreadyProcessed.push( actual );
 
           // compare each key's value
           _( expectedCopy ).each(function ( expectedValue, key ) {
