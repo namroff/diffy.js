@@ -158,6 +158,20 @@ describe( 'diffy.js tests', function () {
       expect( result.actual ).to.eql( { foo: 'apple' } );
     });
 
+    it('says an expected object is not the same as an actual value', function() {
+      var result = diffy( object1, "foo" );
+      expect( result.same ).to.not.be.ok();
+      expect( result.expected ).to.eql( object1 );
+      expect( result.actual ).to.eql( "foo" );
+    })
+
+    it('says an expected value is not the same as an actual object', function() {
+      var result = diffy( "foo", object1 );
+      expect( result.same ).to.not.be.ok();
+      expect( result.actual ).to.eql( object1 );
+      expect( result.expected ).to.eql( "foo" );
+    })
+
   });
 
   describe( 'tests for nested object comparison', function() {
@@ -224,16 +238,16 @@ describe( 'diffy.js tests', function () {
   describe( 'tests for comparison of objects with cycles', function() {
 
     it ('diffy trivial cycle test' // TODO: PENDING--terminates, but yields wrong answer
-    // , function() {
-    //   var obj1 = {},
-    //       obj2 = {};
-    //   obj1.self = obj1;
-    //   obj2.self = obj2;
-    //   var result = diffy( obj1, obj2 );
-    //   expect( result.same ).to.be.ok();
-    //   expect( _.isEmpty( result.expected ) ).to.be.ok();
-    //   expect( _.isEmpty( result.actual ) ).to.be.ok();
-    // }
+      // , function() {
+      //   var obj1 = {},
+      //       obj2 = {};
+      //   obj1.self = obj1;
+      //   obj2.self = obj2;
+      //   var result = diffy( obj1, obj2 );
+      //   expect( result.same ).to.be.ok();
+      //   expect( _.isEmpty( result.expected ) ).to.be.ok();
+      //   expect( _.isEmpty( result.actual ) ).to.be.ok();
+      // }
     );
 
   });
