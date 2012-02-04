@@ -6,7 +6,7 @@
         actualCopy    = _.clone( actual ),
         same = false,
         subcompare,
-        key;
+        key, i;
         
     alreadyProcessed = alreadyProcessed || [];
 
@@ -14,29 +14,25 @@
     if ( (typeof expectedCopy) == (typeof actualCopy) ) {
       if ( _.isArray( expectedCopy ) && _.isArray( actualCopy ) ) {
 
-        // TODO: handle the case where the actual array is longer
-        //       likely factor the below code out into a separate method
-        //       that iterates on the longer array, then swap arguments
-        //       as necessary.
-
         // compare each element
         same = true; // initialization
-        _( expectedCopy ).each(function ( expectedValue, index ) {
-          subcompare = diffy( expectedValue, actualCopy[ index ], alreadyProcessed );
-          if ( subcompare.same ) {
-            expectedCopy[ index ] = undefined;
-            if ( index < actualCopy.length ) {
-              actualCopy[ index ] = undefined;
+        for (i = 0; ( i < expectedCopy.length ) || ( i < actualCopy.length ); i++ ) {
+          if (( i < expectedCopy.length ) && ( i < actualCopy.length )) {
+            subcompare = diffy( expectedCopy[ i ], actualCopy[ i ], alreadyProcessed );
+            if ( subcompare.same ) {
+              expectedCopy[ i ] = undefined;
+              actualCopy[ i ] = undefined;
             }
-          } 
-          else {
-            expectedCopy[ index ] = subcompare.expected;
-            if ( index < actualCopy.length ) {
-              actualCopy[ index ] = subcompare.actual;
+            else {
+              expectedCopy[ i ] = subcompare.expected;
+              actualCopy[ i ] = subcompare.actual;
             }
+            same = same && subcompare.same;
           }
-          same = same && subcompare.same;
-        });
+          else {
+            same = false;
+          }
+        }
       } 
       else if ( typeof expectedCopy == 'object' ) {
         if ( (_.indexOf( alreadyProcessed, expectedCopy ) == -1) &&

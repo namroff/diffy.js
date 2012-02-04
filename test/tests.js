@@ -86,16 +86,12 @@ describe( 'diffy.js tests', function () {
       expect( result.actual ).to.eql([ undefined, undefined ]);
     });
 
-    it('handles when the expected argument is shorter than the actual argument'
-
-      // TODO: pending--implementation to come soon
-
-      // , function() {
-      //   var result = diffy( [ 'foo', 3 ], [ 'foo', 3, false ] );
-      //   expect( result.same ).to.not.be.ok();
-      //   expect( result.expected ).to.eql([ undefined, undefined ]);
-      //   expect( result.actual ).to.eql([ undefined, undefined, false ]);
-      // }
+    it('handles when the expected argument is shorter than the actual argument', function() {
+        var result = diffy( [ 'foo', 3 ], [ 'foo', 3, false ] );
+        expect( result.same ).to.not.be.ok();
+        expect( result.expected ).to.eql([ undefined, undefined ]);
+        expect( result.actual ).to.eql([ undefined, undefined, false ]);
+      }
     );
 
     it('says not same when only expected is an array', function() {
