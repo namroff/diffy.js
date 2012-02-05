@@ -237,18 +237,32 @@ describe( 'diffy.js tests', function () {
 
   describe( 'tests for comparison of objects with cycles', function() {
 
-    it ('diffy trivial cycle test' // TODO: PENDING--terminates, but yields wrong answer
-      // , function() {
-      //   var obj1 = {},
-      //       obj2 = {};
-      //   obj1.self = obj1;
-      //   obj2.self = obj2;
-      //   var result = diffy( obj1, obj2 );
-      //   expect( result.same ).to.be.ok();
-      //   expect( _.isEmpty( result.expected ) ).to.be.ok();
-      //   expect( _.isEmpty( result.actual ) ).to.be.ok();
-      // }
-    );
+    it('handles a trivial cycle', function() {
+      var obj1 = {},
+          obj2 = {};
+      obj1.self = obj1;
+      obj2.self = obj2;
+      var result = diffy( obj1, obj2 );
+      expect( result.same ).to.be.ok();
+      expect( _.isEmpty( result.expected ) ).to.be.ok();
+      expect( _.isEmpty( result.actual ) ).to.be.ok();
+    });
+
+    it('does not say that objects with different cycles are the same', function() {
+      var obj1 = {},
+          obj2 = {};
+      
+      obj1.next = {};
+      obj1.next.parent = obj1;
+
+      obj2.next = {};
+      obj2.next.parent = obj2.next;
+
+      var result = diffy( obj1, obj2 );
+      expect( result.same ).to.not.be.ok();
+      expect( result.expected ).to.eql( obj1 );
+      expect( result.actual ).to.eql( obj2 );
+    });
 
   });
 
