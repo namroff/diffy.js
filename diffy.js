@@ -121,7 +121,7 @@
   }
   else {
     if (typeof define === 'function' && define.amd) {
-      define('diffy', function() {
+      define(function() {
         return diffy;
       });
     }
