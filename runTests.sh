@@ -14,6 +14,5 @@ case "$1" in
 	;;
 	"" )
     ./node_modules/mocha/bin/mocha --reporter spec ./test/tests.js
-    ./node_modules/mocha/bin/mocha --reporter spec ./test/leaked_init_test.js
 	;;
 esac
