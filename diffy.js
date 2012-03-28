@@ -117,6 +117,7 @@
       };
     };
 
+  diffy.diff = diffy;
   diffy.init = function ( _ ) {
     underscore = _;
   };
