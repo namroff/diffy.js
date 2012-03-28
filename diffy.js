@@ -13,13 +13,18 @@
       }
       return false;
     },
-    diffy = function diffy( expected, actual, seenInExpected, seenInActual ) {
+    underscore,
+    diffy = function ( expected, actual, seenInExpected, seenInActual ) {
+      // if our reference to underscore is undefined and there is a global one available, use it
+      if ( typeof(underscore) === 'undefined' && typeof(_) !== 'undefined') {
+        underscore = _;
+      }
 
-      var expectedCopy  = _.clone( expected ),
-          actualCopy    = _.clone( actual ),
+      var expectedCopy  = underscore.clone( expected ),
+          actualCopy    = underscore.clone( actual ),
           same = false,
           subcompare, key, i, expectedSeenIndex, actualSeenIndex;
-          
+
       seenInExpected = seenInExpected || [];
       seenInActual = seenInActual || [];
 
@@ -28,10 +33,10 @@
 
         if ( typeof expectedCopy == 'object' ) {
 
-          expectedSeenIndex = _.indexOf( seenInExpected, expected );
-          actualSeenIndex = _.indexOf( seenInActual, actual );
+          expectedSeenIndex = underscore.indexOf( seenInExpected, expected );
+          actualSeenIndex = underscore.indexOf( seenInActual, actual );
 
-          if ( _.isArray( expectedCopy ) && _.isArray( actualCopy ) ) {
+          if ( underscore.isArray( expectedCopy ) && underscore.isArray( actualCopy ) ) {
 
             // TODO CYCLES IN ARRAYS
 
@@ -54,7 +59,7 @@
                 same = false;
               }
             }
-          } 
+          }
           else if ( typeof expectedCopy == 'object' ) {
 
             if (( expectedSeenIndex == -1) || ( actualSeenIndex == -1) ) {
@@ -63,17 +68,17 @@
               seenInActual.push( actual );
 
               // compare each key's value
-              _( expectedCopy ).each(function ( expectedValue, key ) {
+              underscore( expectedCopy ).each(function ( expectedValue, key ) {
                 if ( expectedCopy.hasOwnProperty( key ) ) {
                   subcompare = diffy( expectedValue, actualCopy[ key ], seenInExpected, seenInActual );
                   if ( subcompare.same ) {
                     delete expectedCopy[ key ];
                     delete actualCopy[ key ];
-                  } 
+                  }
                   else {
                     if ( isCycleMarker( subcompare.expected )) {
                       // TODO figure out how to dig the copy back out... (or is this necessary?)
-                      // expectedCopy[ key ] = 
+                      // expectedCopy[ key ] =
                     }
                     else {
                       expectedCopy[ key ] = subcompare.expected;
@@ -90,7 +95,7 @@
                   }
                 }
               });
-              same = _.isEmpty( expectedCopy ) && _.isEmpty( actualCopy );
+              same = underscore.isEmpty( expectedCopy ) && underscore.isEmpty( actualCopy );
             }
             else {
               expectedCopy = newCycleMarker( expectedSeenIndex );
@@ -98,7 +103,7 @@
               same = ( expectedSeenIndex == actualSeenIndex );
             }
           }
-        } 
+        }
         else {
           // straight comparison
           same = ( expectedCopy === actualCopy );
@@ -111,6 +116,11 @@
         'actual':   actualCopy
       };
     };
+
+  diffy.diff = diffy;
+  diffy.init = function ( _ ) {
+    underscore = _;
+  };
 
   // Handle node, amd, and global systems
   if (typeof exports !== 'undefined') {

@@ -1,3 +1,12 @@
+expect = require('../node_modules/expect.js/expect');
+var underscore = require('../node_modules/underscore/underscore');
+diffy = require('../diffy');
+diffy.init( underscore );
+
+// make a global "_" variable, and make it undefined.  I would like to only do this in the context of
+//  the test, but mocha will see, complain, and fail the test if a new global variable gets "leaked"
+_ = undefined;
+
 describe( 'diffy.js tests', function () {
 
   describe( 'tests for scalar number comparison', function() {
@@ -52,7 +61,7 @@ describe( 'diffy.js tests', function () {
       expect( result.actual ).to.be( false );
     });
 
-    _([ '', 0 ]). each(function ( value ) {
+    underscore([ '', 0 ]). each(function ( value ) {
       it('does not coerce ' + value + ' into false', function () {
         var result = diffy( false, value );
         expect( result.same ).to.not.be.ok();
@@ -133,14 +142,14 @@ describe( 'diffy.js tests', function () {
     it('says objects with the same contents are the same', function () {
       var result = diffy( object1, object2 );
       expect( result.same ).to.be.ok();
-      expect( _.isEmpty( result.expected ) ).to.be.ok();
-      expect( _.isEmpty( result.actual ) ).to.be.ok();
+      expect( underscore.isEmpty( result.expected ) ).to.be.ok();
+      expect( underscore.isEmpty( result.actual ) ).to.be.ok();
     });
 
     it('recognizes when the actual argument has an additional attribute', function () {
       var result = diffy( object1, object3 );
       expect( result.same ).to.not.be.ok();
-      expect( _.isEmpty( result.expected ) ).to.be.ok();
+      expect( underscore.isEmpty( result.expected ) ).to.be.ok();
       expect( result.actual ).to.eql( { extra: null } );
     });
 
@@ -148,7 +157,7 @@ describe( 'diffy.js tests', function () {
       var result = diffy( object1, object4 );
       expect( result.same ).to.not.be.ok();
       expect( result.expected ).to.eql( { bar: "baz" } );
-      expect( _.isEmpty( result.actual ) ).to.be.ok();
+      expect( underscore.isEmpty( result.actual ) ).to.be.ok();
     });
 
     it('recognizes when the expected and actual arguments each have an attribute that the other does not', function () {
@@ -176,7 +185,6 @@ describe( 'diffy.js tests', function () {
 
   describe( 'tests for nested object comparison', function() {
 
-    it('does not corrupt nested objects', function () {
       var obj1 = {
           "SecondaryRatings": {
             "Value": {
@@ -225,12 +233,35 @@ describe( 'diffy.js tests', function () {
             }
           }
         };
+    it('does not corrupt nested objects', function () {
       var result = diffy( obj1, obj2 );
       expect( result.same ).to.be.ok();
-      expect( _.isEmpty( result.expected ) ).to.be.ok();
-      expect( _.isEmpty( result.actual ) ).to.be.ok();
-      expect( _.isEmpty( obj1.SecondaryRatings.Value ) ).to.not.be.ok();
-      expect( _.isEmpty( obj2.SecondaryRatings.Value ) ).to.not.be.ok();
+      expect( underscore.isEmpty( result.expected ) ).to.be.ok();
+      expect( underscore.isEmpty( result.actual ) ).to.be.ok();
+      expect( underscore.isEmpty( obj1.SecondaryRatings.Value ) ).to.not.be.ok();
+      expect( underscore.isEmpty( obj2.SecondaryRatings.Value ) ).to.not.be.ok();
+    });
+
+    it('can use a globally leaked underscore and still work', function () {
+
+      var orig_underscore = _;
+      try
+      {
+        // reset diffy's reference to underscore, and globally leak underscore
+        diffy.init( undefined );
+        _ = underscore;
+
+        var result = diffy( obj1, obj2 );
+        expect( result.same ).to.be.ok();
+        expect( underscore.isEmpty( result.expected ) ).to.be.ok();
+        expect( underscore.isEmpty( result.actual ) ).to.be.ok();
+        expect( underscore.isEmpty( obj1.SecondaryRatings.Value ) ).to.not.be.ok();
+        expect( underscore.isEmpty( obj2.SecondaryRatings.Value ) ).to.not.be.ok();
+      }
+      finally
+      {
+        _ = orig_underscore;
+      }
     });
 
   });
@@ -244,14 +275,14 @@ describe( 'diffy.js tests', function () {
       obj2.self = obj2;
       var result = diffy( obj1, obj2 );
       expect( result.same ).to.be.ok();
-      expect( _.isEmpty( result.expected ) ).to.be.ok();
-      expect( _.isEmpty( result.actual ) ).to.be.ok();
+      expect( underscore.isEmpty( result.expected ) ).to.be.ok();
+      expect( underscore.isEmpty( result.actual ) ).to.be.ok();
     });
 
     it('does not say that objects with different cycles are the same', function() {
       var obj1 = {},
           obj2 = {};
-      
+
       obj1.next = {};
       obj1.next.parent = obj1;
 
